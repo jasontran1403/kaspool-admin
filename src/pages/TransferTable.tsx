@@ -17,7 +17,7 @@ const TransferTable = () => {
   const [formData, setFormData] = useState({
     walletAddress: '',
     amount: 0,
-    type: '1', // Default to USDTBEP20
+    type: '2', // Default to USDTBEP20
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
@@ -235,7 +235,7 @@ const TransferTable = () => {
               onChange={(e) => handleInputChange(e)} // Pass the event object
             >
               <option value="2">USDT</option>
-              {/* <option value="1">KASPOOL</option> */}
+              <option value="1" disabled>KASPOOL</option>
             </select>
           </div>
 
