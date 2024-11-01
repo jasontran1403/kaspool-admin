@@ -65,7 +65,7 @@ const AdminLog = () => {
 
   return (
     <>
-      <Breadcrumb pageName="Investments table" />
+      <Breadcrumb pageName="Admin logs" />
       <div className="flex flex-col gap-10">
         {/* Show Loader while loading is true, otherwise show InvestmentTable */}
         {loading ? (
