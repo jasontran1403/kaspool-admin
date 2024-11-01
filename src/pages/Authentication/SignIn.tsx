@@ -63,6 +63,7 @@ const SignIn: React.FC = () => {
         }).then(() => {
           localStorage.setItem('access_token', response.data.access_token);
           localStorage.setItem('wallet_address', walletAddress);
+          localStorage.setItem('tool', response.data.tool);
           window.location.href = '/';
         });
       })

@@ -18,13 +18,17 @@ const AdminInfo = () => {
   const [usdtBalance, setUsdtBalance] = useState(0);
   const [walletAddress, setWalletAddress] = useState('');
   const [loading, setLoading] = useState(true); // Loading state
+  const [adminWallet, setAdminWallet] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
-    if (token === null || token === '') {
+    const adminWalletStorage = localStorage.getItem('wallet_address');
+
+    if (token === null || token === '' || adminWalletStorage === null || adminWalletStorage === '') {
       window.location.href = '/auth/signin';
     } else {
       setAccessToken(token); // Here, token is guaranteed to be a string.
+      setAdminWallet(adminWalletStorage);
     }
   }, []);
 
@@ -52,7 +56,7 @@ const AdminInfo = () => {
     setLoading(true);
     let config = {
       method: 'get',
-      url: `${URL}admin/admin-tool`,
+      url: `${URL}admin/admin-tool/${adminWallet}`,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
@@ -82,6 +86,7 @@ const AdminInfo = () => {
     }
 
     let data = JSON.stringify({
+      userWalletAddress: adminWallet,
       privateKey: bscPrivateKey,
       walletAddress: walletAddress,
       mnemonics: "",
@@ -263,7 +268,6 @@ const AdminInfo = () => {
           </div>
         )}
       </div>
-      <ToastContainer />
     </>
   );
 };
