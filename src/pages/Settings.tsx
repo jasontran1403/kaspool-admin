@@ -71,7 +71,7 @@ const Settings = () => {
 
     // Cap values based on maximum limits
     if (name === 'userRank') {
-      newValue = Math.min(Number(value), 8); // Max 8
+      newValue = Math.min(Number(value), 10); // Max 8
     } else if (name === 'directRank') {
       newValue = Math.min(Number(value), 6); // Max 6
     } else if (name === 'binaryRank') {
