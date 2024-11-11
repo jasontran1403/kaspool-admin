@@ -73,9 +73,9 @@ const Settings = () => {
     if (name === 'userRank') {
       newValue = Math.min(Number(value), 10); // Max 8
     } else if (name === 'directRank') {
-      newValue = Math.min(Number(value), 6); // Max 6
+      newValue = Math.min(Number(value), 5); // Max 6
     } else if (name === 'binaryRank') {
-      newValue = Math.min(Number(value), 4); // Max 4
+      newValue = Math.min(Number(value), 5); // Max 4
     }
 
     setUserDetail((prevDetail) => ({
@@ -236,7 +236,7 @@ const Settings = () => {
                           className="w-full rounded border border-stroke bg-gray py-3 pl-4 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                         >
                           {/* Generate options from 0 to 6 */}
-                          {[...Array(6)].map((_, index) => (
+                          {[...Array(5)].map((_, index) => (
                             <option key={index} value={index}>
                               Direct {index}
                             </option>
@@ -263,7 +263,7 @@ const Settings = () => {
                           className="w-full rounded border border-stroke bg-gray py-3 pl-4 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                         >
                           {/* Generate options from 0 to 4 */}
-                          {[...Array(6)].map((_, index) => (
+                          {[...Array(5)].map((_, index) => (
                             <option key={index} value={index}>
                               Binary {index}
                             </option>
