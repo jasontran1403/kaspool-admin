@@ -232,7 +232,8 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
                   <div className="flex items-center space-x-3.5">
                     <a
                       className="hover:text-primary"
-                      href={`https://kaspool.io/admin/dashboard/${user.walletAddress}`}
+                      // href={`http://localhost:5173/admin/home/${user.walletAddress}`}
+                      href={`https://kaspool.io/admin/home/${user.walletAddress}`}
                       target="_blank"
                     >
                       {/* Login Icon */}

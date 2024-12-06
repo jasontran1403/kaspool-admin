@@ -19,6 +19,9 @@ const AdminInfo = () => {
   const [walletAddress, setWalletAddress] = useState('');
   const [loading, setLoading] = useState(true); // Loading state
   const [adminWallet, setAdminWallet] = useState("");
+  const [kaspaBalance, setKaspaBalance] = useState(0);
+  const [kaspaWallet, setKaspaWallet] = useState("");
+  const [kaspaMnemonic, setKaspaMnemonic] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
@@ -73,6 +76,9 @@ const AdminInfo = () => {
         setTonWallet(response.data.tonWallet);
         setMnemonics(response.data.mnemonics);
         setWalletAddress(response.data.walletAddress);
+        setKaspaBalance(response.data.kasBalance);
+        setKaspaMnemonic(response.data.kaspaMnemonics);
+        setKaspaWallet(response.data.kaspaWallet);
       })
       .catch((error) => {
         console.log(error);
@@ -192,27 +198,6 @@ const AdminInfo = () => {
                     </div>
 
                     <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
-                      <div className="w-full">
-                        <label
-                          className="mb-3 block text-sm font-medium text-black dark:text-white"
-                          htmlFor="displayName"
-                        >
-                          KASPOOL Price
-                        </label>
-                        <input
-                          className="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                          type="number"
-                          name="displayName"
-                          id="displayName"
-                          value={mctPrice}
-                          onChange={(e) => {
-                            setMctPrice(e.target.value);
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
                       <div className="w-full sm:w-1/2">
                         <label
                           className="mb-3 block text-sm font-medium text-black dark:text-white"
@@ -246,6 +231,66 @@ const AdminInfo = () => {
                           id="displayName"
                           value={usdtBalance}
                           readOnly
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+                      <div className="w-full sm:w-1/2">
+                        <label
+                          className="mb-3 block text-sm font-medium text-black dark:text-white"
+                          htmlFor="walletAddress"
+                        >
+                          Kaspa Wallet Address
+                        </label>
+                        <div className="relative">
+                          <input
+                            className="w-full rounded border border-stroke bg-gray py-3 pl-4 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                            type="text"
+                            name="walletAddress"
+                            id="walletAddress"
+                            value={kaspaWallet}
+                            readOnly
+                            disabled
+                          />
+                        </div>
+                      </div>
+
+                      <div className="w-full sm:w-1/2">
+                        <label
+                          className="mb-3 block text-sm font-medium text-black dark:text-white"
+                          htmlFor="displayName"
+                        >
+                          Kaspa Mnemonic
+                        </label>
+                        <input
+                          className="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                          type="text"
+                          name="displayName"
+                          id="displayName"
+                          value={kaspaMnemonic}
+                          readOnly
+                          disabled
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+                      <div className="w-full">
+                        <label
+                          className="mb-3 block text-sm font-medium text-black dark:text-white"
+                          htmlFor="displayName"
+                        >
+                          Kaspa Balance
+                        </label>
+                        <input
+                          className="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                          type="number"
+                          name="displayName"
+                          id="displayName"
+                          value={kaspaBalance}
+                          readOnly
+                          disabled
                         />
                       </div>
                     </div>
