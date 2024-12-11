@@ -21,17 +21,34 @@ type User = {
   maxOut: number;
   lock: boolean;
   lockTransaction: boolean;
+  lockWithdraw: boolean;
 };
 
 interface UserTableProps {
   data: User[];
+  currentPage?: number,
+  totalPage?: number,
+  searchTerm: string; // Nhận searchTerm từ props
+  onSearchChange: (term: string) => void; // Nhận hàm để thay đổi searchTerm
+  onPageChange: (newPage: number) => void; // Function to handle page change
 }
 
-const UserTable: React.FC<UserTableProps> = ({ data }) => {
+const UserTable: React.FC<UserTableProps> = ({ data , currentPage = 0,  totalPage = 0, onPageChange, searchTerm, onSearchChange }) => {
   const [accessToken] = useState(localStorage.getItem('access_token'));
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+
+  const [page, setPage] = useState(currentPage);
+
+  const handlePrev = () => {
+    if (currentPage > 0) {
+      onPageChange(currentPage - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPage - 1) {
+      onPageChange(currentPage + 1);
+    }
+  };
 
   const handleUserPage = (userWallet: string) => {
     if (userWallet === null || userWallet === '') {
@@ -41,23 +58,11 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
     window.location.href = `/user/${userWallet}`;
   };
 
-  // Filter users based on search term
-  const filteredUsers = data.filter(
-    (user) =>
-      user.walletAddress.includes(searchTerm) ||
-      (user.displayName && user.displayName.includes(searchTerm)),
-  );
+  const pageNumbers = Array.from({ length: Math.min(5, totalPage) }, (_, index) => {
+    const startPage = Math.max(0, currentPage - 2); // Start at currentPage - 2
+    return startPage + index; // Generate page numbers based on the starting point
+  }).filter(page => page < totalPage); // Ensure no out-of-bound pages
 
-  // Pagination logic
-  const indexOfLastUser = currentPage * itemsPerPage;
-  const indexOfFirstUser = indexOfLastUser - itemsPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
 
   const handleToggle = (userWalletAddress: string) => {
     if (userWalletAddress === null || userWalletAddress === '') {
@@ -117,7 +122,7 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
         Swal.fire({
           position: 'top-end',
           icon: 'success',
-          title: 'Toggle transaction status success',
+          title: 'Toggle transfer status success',
           showConfirmButton: false,
           timer: 2000,
         }).then(() => {
@@ -132,6 +137,68 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
       });
   };
 
+  const handleToggleWithdraw = (userWalletAddress: string) => {
+    if (userWalletAddress === null || userWalletAddress === '') {
+      return;
+    }
+
+    let config = {
+      method: 'get',
+      url: `${URL}admin/lock-withdraw/${userWalletAddress}`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'ngrok-skip-browser-warning': '69420',
+      },
+    };
+
+    Axios.request(config)
+      .then(() => {
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: 'Toggle withdraw status success',
+          showConfirmButton: false,
+          timer: 2000,
+        }).then(() => {
+          window.location.reload();
+        });
+      })
+      .catch((error) => {
+        toast.error(error, {
+          position: 'top-right',
+          autoClose: 1500,
+        });
+      });
+  };
+
+  const handleToggleStaking = (walletAddress: string) => {
+    let config = {
+      method: 'get',
+      url: `${URL}admin/end-stake/${walletAddress}`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'ngrok-skip-browser-warning': '69420',
+      },
+    };
+
+    Axios
+      .request(config)
+      .then(() => {
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: 'End staking success',
+          showConfirmButton: false,
+          timer: 2000,
+        }).then(() => {
+          window.location.reload();
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const copyToClipboard = (wallet: string) => {
     navigator.clipboard
       .writeText(wallet)
@@ -142,17 +209,20 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
         });
       })
       .catch((err) => {
-        console.error('Failed to copy: ', err);
+        toast.error(err, {
+          position: 'top-right',
+          autoClose: 1500,
+        });
       });
   };
-  
+
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <input
         type="text"
         placeholder="Search by Wallet Address or Display Name"
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={(e) => onSearchChange(e.target.value)}
         className="mb-4 w-full p-2 border border-gray-300 rounded"
       />
       <div className="max-w-full overflow-x-auto">
@@ -175,7 +245,13 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
                 Status
               </th>
               <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                Transaction
+                Transfer
+              </th>
+              <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                Withdraw
+              </th>
+              <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                Staking
               </th>
               <th className="py-4 px-4 font-medium text-black dark:text-white">
                 Actions
@@ -183,7 +259,7 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
             </tr>
           </thead>
           <tbody>
-            {currentUsers.map((user, idx) => (
+            {data.map((user, idx) => (
               <tr key={idx}>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <p
@@ -226,14 +302,97 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
                     }`}
                   >
                     {user.lockTransaction === false ? 'Unlocked' : 'Locked'}
+                    <button
+                      className="hover:text-primary"
+                      onClick={() => {
+                        handleToggleTransaction(user.walletAddress);
+                      }}
+                    >
+                      {/* Transaction Lock Icon */}
+                      <svg
+                        className="fill-current"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M12 2C8.69 2 6 4.69 6 8v4H4v8h16v-8h-2V8c0-3.31-2.69-6-6-6zm4 10v6H8v-6h8zm-4-8c2.21 0 4 1.79 4 4v4H8V8c0-2.21 1.79-4 4-4z"
+                          fill=""
+                        />
+                      </svg>
+                    </button>
+                  </p>
+                </td>
+                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                  <p
+                    className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
+                      user.lockWithdraw === false
+                        ? 'bg-success text-success'
+                        : 'bg-danger text-danger'
+                    }`}
+                  >
+                    {user.lockWithdraw === false ? 'Unlocked' : 'Locked'}
+                    <button
+                      className="hover:text-primary"
+                      onClick={() => {
+                        handleToggleWithdraw(user.walletAddress);
+                      }}
+                    >
+                      {/* Transaction Lock Icon */}
+                      <svg
+                        className="fill-current"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M12 2C8.69 2 6 4.69 6 8v4H4v8h16v-8h-2V8c0-3.31-2.69-6-6-6zm4 10v6H8v-6h8zm-4-8c2.21 0 4 1.79 4 4v4H8V8c0-2.21 1.79-4 4-4z"
+                          fill=""
+                        />
+                      </svg>
+                    </button>
+                  </p>
+                </td>
+                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                  <p
+                    className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${'bg-danger text-danger'}`}
+                  >
+                    <button
+                      className="hover:text-primary"
+                      onClick={() => {
+                        handleToggleStaking(user.walletAddress);
+                      }}
+                    >
+                      {/* Transaction Lock Icon */}
+                      <svg
+                        className="fill-current"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <rect
+                          x="4"
+                          y="4"
+                          width="16"
+                          height="16"
+                          fill="#f00"
+                          rx="2"
+                        />
+                      </svg>
+                    </button>
                   </p>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
                     <a
                       className="hover:text-primary"
-                      // href={`http://localhost:5173/admin/home/${user.walletAddress}`}
-                      href={`https://kaspool.io/admin/home/${user.walletAddress}`}
+                      href={`https://www.kaspool.io/admin/home/${user.walletAddress}`}
                       target="_blank"
                     >
                       {/* Login Icon */}
@@ -273,27 +432,6 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
                     </button>
 
                     {/* Lock Icon */}
-                    <button
-                      className="hover:text-primary"
-                      onClick={() => {
-                        handleToggleTransaction(user.walletAddress);
-                      }}
-                    >
-                      {/* Transaction Lock Icon */}
-                      <svg
-                        className="fill-current"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M12 2C8.69 2 6 4.69 6 8v4H4v8h16v-8h-2V8c0-3.31-2.69-6-6-6zm4 10v6H8v-6h8zm-4-8c2.21 0 4 1.79 4 4v4H8V8c0-2.21 1.79-4 4-4z"
-                          fill=""
-                        />
-                      </svg>
-                    </button>
 
                     {/* Lock Icon */}
                     <button
@@ -327,44 +465,27 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
       {/* Pagination Controls */}
       <div className="mt-4 flex justify-center">
         <button
-          onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-          className={`mx-1 px-3 py-1 rounded ${
-            currentPage === 1 ? 'bg-gray-300' : 'bg-gray-300 text-black'
-          }`}
-          disabled={currentPage === 1}
+          className={`mx-1 px-3 py-1 rounded ${currentPage === 0 ? 'bg-gray-300' : 'bg-gray-300 text-black'}`}
+          onClick={handlePrev}
+          disabled={currentPage === 0}
         >
           Prev
         </button>
-        {Array.from({ length: Math.min(3, totalPages) }, (_, index) => {
-          const startPage = Math.max(
-            1,
-            Math.min(currentPage - 1, totalPages - 2),
-          ); // Ensure the range ends at totalPages
-          const pageIndex = startPage + index;
-          return (
-            <button
-              key={pageIndex}
-              onClick={() => handlePageChange(pageIndex)}
-              className={`mx-1 px-3 py-1 rounded ${
-                currentPage === pageIndex
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-300'
-              }`}
-            >
-              {pageIndex}
-            </button>
-          );
-        })}
+
+        {pageNumbers.map(pageIndex => (
+          <button
+            key={pageIndex}
+            className={`mx-1 px-3 py-1 rounded ${currentPage === pageIndex ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
+            onClick={() => onPageChange(pageIndex)}
+          >
+            {pageIndex + 1}
+          </button>
+        ))}
+
         <button
-          onClick={() =>
-            handlePageChange(Math.min(totalPages, currentPage + 1))
-          }
-          className={`mx-1 px-3 py-1 rounded ${
-            currentPage === totalPages
-              ? 'bg-gray-300'
-              : 'bg-gray-300 text-black'
-          }`}
-          disabled={currentPage === totalPages}
+          className={`mx-1 px-3 py-1 rounded ${currentPage === totalPage - 1 ? 'bg-gray-300' : 'bg-gray-300 text-black'}`}
+          onClick={handleNext}
+          disabled={currentPage === totalPage - 1}
         >
           Next
         </button>
