@@ -50,7 +50,7 @@ const PendingWithdrawMCT = () => {
     setLoading(true);
     let config = {
       method: 'get',
-      url: `${URL}admin/pending-withdraw-mct`,
+      url: `${URL}admin/pending-withdraw-kaspa`,
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'ngrok-skip-browser-warning': '69420',
@@ -92,7 +92,7 @@ const PendingWithdrawMCT = () => {
         setButtonDisabled(true);
         let config = {
           method: 'get',
-          url: `${URL}admin/approve/${code}`,
+          url: `${URL}admin/approve-kaspa/${code}`,
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'ngrok-skip-browser-warning': '69420',

@@ -169,19 +169,10 @@ function App() {
           }
         />
         <Route
-          path="/pending-deposit-mct"
+          path="/pending-withdraw-kaspa"
           element={
             <>
-              <PageTitle title="Pending Deposit MCT" />
-              <PendingDepositMCT />
-            </>
-          }
-        />
-        <Route
-          path="/pending-withdraw-mct"
-          element={
-            <>
-              <PageTitle title="Pending Withdraw MCT" />
+              <PageTitle title="Pending Withdraw Kaspa" />
               <PendingWithdrawMCT />
             </>
           }
