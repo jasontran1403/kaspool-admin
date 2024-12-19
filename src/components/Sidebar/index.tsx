@@ -16,12 +16,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const [tool] = useState(localStorage.getItem('tool'));
   const [adminWallet] = useState(localStorage.getItem('wallet_address'));
 
-  // useEffect(() => {
-  //   console.log(pathname);
-  //   if (tool === 'false' && adminWallet !== 'admin1' && pathname === "/tools") {
-  //     navigate('/');
-  //   }
-  // }, [tool, adminWallet, navigate]);
+  useEffect(() => {
+    console.log(pathname);
+    if (tool === 'false' && adminWallet !== 'admin1' && pathname === "/tools") {
+      navigate('/');
+    }
+  }, [tool, adminWallet, navigate]);
 
   const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
