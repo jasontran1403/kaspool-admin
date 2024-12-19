@@ -198,7 +198,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Investments --> */}
 
               {/* <!-- Menu Admin Tool --> */}
-              <li>
+              
+              {tool == 'true' ? (
+                <li>
                 <NavLink
                   to="/tools"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('tools') && 'bg-graydark dark:bg-meta-4'
@@ -224,11 +226,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   Admin Tools
                 </NavLink>
               </li>
-              {/* {tool == 'true' ? (
-                
               ) : (
                 <></>
-              )} */}
+              )}
               {/* <!-- Menu Admin Tool --> */}
 
               {/* <!-- Menu Item Pending --> */}
