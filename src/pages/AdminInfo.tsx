@@ -7,6 +7,7 @@ import { URL } from '../types/constant';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
 import Loader from '../common/Loader';
+import { saveAs } from 'file-saver';
 
 const AdminInfo = () => {
   const [accessToken, setAccessToken] = useState('');
@@ -43,7 +44,7 @@ const AdminInfo = () => {
         'ngrok-skip-browser-warning': '69420',
       },
     };
-  
+
     Axios.request(config)
       .then(() => {
         localStorage.removeItem('access_token'); // Clear access token
@@ -135,7 +136,68 @@ const AdminInfo = () => {
       });
   };
 
-  console.log(accessToken);
+  const handleExportDeposit = () => {
+    let config = {
+      method: 'get',
+      url: `${URL}admin/export-deposit`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'ngrok-skip-browser-warning': '69420',
+      },
+      responseType: 'blob', // Quan trọng để nhận dữ liệu dưới dạng file
+    };
+
+    Axios.request(config)
+      .then((response) => {
+        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        saveAs(blob, 'deposit_history.xlsx'); // Đặt tên file tải về
+      })
+      .catch((error) => {
+        console.error('Error downloading file:', error);
+      });
+  };
+
+  const handleExportDirect = () => {
+    let config = {
+      method: 'get',
+      url: `${URL}admin/export-direct`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'ngrok-skip-browser-warning': '69420',
+      },
+      responseType: 'blob', // Quan trọng để nhận dữ liệu dưới dạng file
+    };
+
+    Axios.request(config)
+      .then((response) => {
+        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        saveAs(blob, 'direct_history.xlsx'); // Đặt tên file tải về
+      })
+      .catch((error) => {
+        console.error('Error downloading file:', error);
+      });
+  };
+
+  const handleExportWithdraw = () => {
+    let config = {
+      method: 'get',
+      url: `${URL}admin/export-withdraw`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'ngrok-skip-browser-warning': '69420',
+      },
+      responseType: 'blob', // Quan trọng để nhận dữ liệu dưới dạng file
+    };
+
+    Axios.request(config)
+      .then((response) => {
+        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        saveAs(blob, 'withdraw_history.xlsx'); // Đặt tên file tải về
+      })
+      .catch((error) => {
+        console.error('Error downloading file:', error);
+      });
+  };
 
   return (
     <>
@@ -307,9 +369,29 @@ const AdminInfo = () => {
                       </button>
                     </div>
                   </div>
+
                 </div>
               </div>
+              <div className="w-full flex justify-center items-center gap-6 mt-3">
+                <button className="flex justify-center rounded bg-primary py-2 px-3 font-medium text-gray hover:bg-opacity-70"
+                  onClick={handleExportDeposit}
+                >
+                  Export Deposit
+                </button>
+                <button className="flex justify-center rounded bg-primary py-2 px-3 font-medium text-gray hover:bg-opacity-70"
+                  onClick={handleExportDirect}
+                >
+                  Export Direct
+                </button>
+                <button
+                  onClick={handleExportWithdraw}
+                  className="flex justify-center rounded bg-primary py-2 px-3 font-medium text-gray hover:bg-opacity-70"
+                >
+                  Export Withdraw
+                </button>
+              </div>
             </div>
+
           </div>
         )}
       </div>
