@@ -46,14 +46,6 @@ const SignIn: React.FC = () => {
 
     Axios.request(config)
       .then((response) => {
-        // toast.success('Sign in success!', {
-        //   position: 'top-right',
-        //   autoClose: 1500,
-        //   onClick: () => {
-        //     localStorage.setItem('access_token', response.data.access_token);
-        //     window.location.href = '/';
-        //   },
-        // });
         Swal.fire({
           position: 'top-end',
           icon: 'success',
