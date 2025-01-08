@@ -4,8 +4,8 @@ import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
 import UsersTable from '../components/Tables/UserTable';
 import { URL } from '../types/constant';
 import Loader from '../common/Loader';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
+import 'sweetalert2/src/sweetalert2.scss';
 
 const UserTable = () => {
   const [accessToken, setAccessToken] = useState('');
@@ -123,9 +123,17 @@ const UserTable = () => {
 
     Axios.request(config)
       .then((response) => {
-        toast.success(response.data, {
-          position: 'top-right',
-          autoClose: 300000,
+        // Build the HTML string to display in the Swal modal
+        let displayText = "";
+        response.data.forEach(item => {
+          displayText += `<p className="text-left">+ Address: ${item.walletAddress}<br>Balance: ${item.amount}</p>`;
+        });
+
+        // Show the result in a Swal modal with HTML
+        Swal.fire({
+          title: "Result!",
+          html: displayText,
+          icon: "success"
         });
       });
   };
@@ -142,9 +150,10 @@ const UserTable = () => {
 
     Axios.request(config)
       .then((response) => {
-        toast.success(response.data, {
-          position: 'top-right',
-          autoClose: 300000,
+        Swal.fire({
+          title: "Result!",
+          text: JSON.stringify(response.data, null, 2),
+          icon: "success"
         });
       });
   };
@@ -161,9 +170,10 @@ const UserTable = () => {
 
     Axios.request(config)
       .then((response) => {
-        toast.success(response.data, {
-          position: 'top-right',
-          autoClose: 300000,
+        Swal.fire({
+          title: "Result!",
+          text: JSON.stringify(response.data, null, 2),
+          icon: "success"
         });
       });
   };

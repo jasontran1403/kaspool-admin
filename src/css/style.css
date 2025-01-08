@@ -21,6 +21,11 @@
   border-radius: 5px;
 }
 
+.text-left {
+  text-align: left!important;
+  border-bottom: 1px solid whitesmoke!important;
+}
+
 .custom-cancel-button {
   background-color: orangered;  /* Orangered background */
   color: white;                 /* White text */
