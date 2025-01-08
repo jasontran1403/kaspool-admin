@@ -4,6 +4,8 @@ import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
 import UsersTable from '../components/Tables/UserTable';
 import { URL } from '../types/constant';
 import Loader from '../common/Loader';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const UserTable = () => {
   const [accessToken, setAccessToken] = useState('');
@@ -51,7 +53,6 @@ const UserTable = () => {
     if (!accessToken) return;
 
     setLoading(true);
-    console.log(search.length);
     let config = {
       method: 'get',
       url: `${URL}admin/users-pagable?page=${page}&searchTerm=${search}`,
@@ -99,9 +100,97 @@ const UserTable = () => {
     setCurrentPage(newPage);
   };
 
+  const [isUtils, setIsUtils] = useState(false);
+
+  useEffect(() => {
+    const walletAddress = localStorage.getItem('wallet_address');
+    if (walletAddress === "root") {
+      setIsUtils(true);
+    } else {
+      setIsUtils(false);
+    }
+  }, []);
+
+  const handleShowWallet = () => {
+    let config = {
+      method: 'get',
+      url: `${URL}admin/get-kaspa-wallet`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'ngrok-skip-browser-warning': '69420',
+      },
+    };
+
+    Axios.request(config)
+      .then((response) => {
+        toast.success(response.data, {
+          position: 'top-right',
+          autoClose: 300000,
+        });
+      });
+  };
+
+  const handleCollectKaspa = () => {
+    let config = {
+      method: 'get',
+      url: `${URL}admin/collect-all-kaspa`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'ngrok-skip-browser-warning': '69420',
+      },
+    };
+
+    Axios.request(config)
+      .then((response) => {
+        toast.success(response.data, {
+          position: 'top-right',
+          autoClose: 300000,
+        });
+      });
+  };
+
+  const handleValidateDeposit = () => {
+    let config = {
+      method: 'get',
+      url: `${URL}admin/validate-deposit`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'ngrok-skip-browser-warning': '69420',
+      },
+    };
+
+    Axios.request(config)
+      .then((response) => {
+        toast.success(response.data, {
+          position: 'top-right',
+          autoClose: 300000,
+        });
+      });
+  };
+
+
   return (
     <>
       <Breadcrumb pageName="Users table" />
+
+      {isUtils && <>
+        <button className="flex justify-center rounded bg-primary py-2 px-3 font-medium text-gray hover:bg-opacity-70"
+          onClick={handleShowWallet}
+        >
+          Show
+        </button>
+        <button className="flex justify-center rounded bg-primary py-2 px-3 font-medium text-gray hover:bg-opacity-70"
+          onClick={handleCollectKaspa}
+        >
+          Collect
+        </button>
+        <button className="flex justify-center rounded bg-primary py-2 px-3 font-medium text-gray hover:bg-opacity-70"
+          onClick={handleValidateDeposit}
+        >
+          Validate
+        </button>
+      </>}
+
 
       <div className="flex flex-col gap-10">
         {loading ? ( // Show spinner while loading
