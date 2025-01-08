@@ -126,7 +126,8 @@ const UserTable = () => {
         // Build the HTML string to display in the Swal modal
         let displayText = "";
         response.data.forEach(item => {
-          displayText += `<p className="text-left">+ Address: ${item.walletAddress}<br>Balance: ${item.amount}</p>`;
+          const shortenedAddress = `${item.walletAddress.slice(0, 15)}...${item.walletAddress.slice(-15)}`;
+          displayText += `<p className="text-left">+ Address: ${shortenedAddress}<br>Balance: ${item.amount}</p>`;
         });
 
         // Show the result in a Swal modal with HTML
